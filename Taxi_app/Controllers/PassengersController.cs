@@ -29,6 +29,7 @@ namespace Taxi_app.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Passenger passenger = db.Passengers.Find(id);
+            ViewBag.previousPassengerRides = passenger.Rides.Where(r => r.Time < DateTime.Now).ToList();
             if (passenger == null)
             {
                 return HttpNotFound();

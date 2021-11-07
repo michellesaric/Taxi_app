@@ -121,6 +121,23 @@ namespace Taxi_app.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult GetVehiclesForDriver(int? driverId)
+        {
+            if (driverId != null)
+            {
+                using (var newDb = new Taxi01Context())
+                {
+                    newDb.Configuration.ProxyCreationEnabled = false;
+                    var newVehicles = newDb.Vehicles.Where(v => v.DriverId == driverId).ToList();
+                    return Json(newVehicles, JsonRequestBehavior.AllowGet);
+                }
+            }
+            else
+            {
+                return Json(new { status = "u messed up son" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

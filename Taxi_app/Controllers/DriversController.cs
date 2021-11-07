@@ -28,7 +28,13 @@ namespace Taxi_app.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Driver driver = db.Drivers.Find(id);
+            Driver driver = db.Drivers
+                .Include(d => d.OwnedVehicles)
+                .Include(d => d.Rides)
+                .FirstOrDefault(d => d.ID == id);
+            ViewBag.previousRides = driver.Rides.Where(r => r.Time < DateTime.Now).ToList();
+            ViewBag.bookedRides = driver.Rides.Where(r => r.Time >= DateTime.Now).ToList();
+            
             if (driver == null)
             {
                 return HttpNotFound();

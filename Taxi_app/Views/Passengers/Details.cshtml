@@ -26,6 +26,22 @@
             @Html.DisplayFor(model => model.Surname)
         </dd>
 
+        @if (ViewBag.previousPassengerRides.Count > 0)
+        {
+            <dt>
+                Previous rides
+            </dt>
+
+            <dd>
+                @foreach (var ride in ViewBag.previousPassengerRides)
+                {
+                    <div>
+                        @ride.StartLocation.Name -  @ride.EndLocation.Name (@ride.Time)
+                    </div>
+                }
+            </dd>
+        }
+
     </dl>
 </div>
 <p>

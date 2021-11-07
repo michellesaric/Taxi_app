@@ -38,13 +38,27 @@ namespace Taxi_app.Controllers
         }
 
         // GET: Rides/Create
-        public ActionResult Create()
+        public ActionResult Create(int? driverId)
         {
-            ViewBag.DriverId = new SelectList(db.Drivers, "ID", "Name");
+            // ViewBag.DriverId = new SelectList(db.Drivers, "ID", "Name");
             ViewBag.EndLocationId = new SelectList(db.Cities, "ID", "Name");
             ViewBag.PassengerId = new SelectList(db.Passengers, "ID", "Name");
             ViewBag.StartLocationId = new SelectList(db.Cities, "ID", "Name");
-            ViewBag.VehicleId = new SelectList(db.Vehicles, "ID", "Brand");
+            // ViewBag.VehicleId = new SelectList(db.Vehicles, "ID", "Brand");
+
+            var drivers = db.Drivers;
+            if (driverId != null)
+            {
+                var chosenDriver = drivers.Find(driverId);
+                ViewBag.DriverSelectList = new SelectList(drivers, "ID", "Fullname", chosenDriver.Fullname);
+                ViewBag.VehicleSelectList = new SelectList(db.Vehicles.Where(v => v.DriverId == driverId), "ID", "Fullname");
+            }
+            else
+            {
+                int firstId = drivers.FirstOrDefault().ID;
+                ViewBag.DriverSelectList = new SelectList(drivers, "ID", "Fullname", firstId);
+                ViewBag.VehicleSelectList = new SelectList(db.Vehicles.Where(v => v.DriverId == firstId), "ID", "Fullname");
+            }
             return View();
         }
 

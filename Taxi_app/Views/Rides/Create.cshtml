@@ -2,56 +2,71 @@
 
 @{
     ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Create</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Ride</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
         <div class="form-group">
-            @Html.LabelFor(model => model.StartLocationId, "StartLocationId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.DriverId, "Driver", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("StartLocationId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.StartLocationId, "", new { @class = "text-danger" })
+                @Html.DropDownList("DriverSelectList", null, htmlAttributes: new { @class = "form-control", @onchange = "UpdateVehicles()" })
+                @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+
+
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.EndLocationId, "EndLocationId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("EndLocationId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.EndLocationId, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.VehicleId, "VehicleId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.VehicleId, "Vehicle", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("VehicleId", null, htmlAttributes: new { @class = "form-control" })
+
+
+                @Html.DropDownList("VehicleSelectList", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.VehicleId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.DriverId, "DriverId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.PassengerId, "Passenger", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("DriverId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+
+
+                @Html.DropDownList("PassengerId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PassengerId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.PassengerId, "PassengerId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.StartLocationId, "Start location", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("PassengerId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.PassengerId, "", new { @class = "text-danger" })
+
+
+                @Html.DropDownList("StartLocationId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.StartLocationId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EndLocationId, "Final destination", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+
+
+                @Html.DropDownList("EndLocationId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EndLocationId, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -77,4 +92,29 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        async function UpdateVehicles() {
+
+            const driverId = document.getElementById("DriverSelectList")?.value;
+
+            const formData = new FormData();
+            formData.append('driverId', driverId);
+
+            let response = await fetch('/Vehicles/GetVehiclesForDriver', {
+                method: 'POST',
+                body: formData
+            })
+
+            const vehicles = await response.json();
+            let vSelectList = document.getElementById("VehicleSelectList");
+
+            vSelectList.innerHTML = "";
+            vehicles.forEach(function (vehicle) {
+                const option = document.createElement("option");
+                option.value = vehicle.ID;
+                option.innerHTML = vehicle.Fullname;
+                vSelectList?.appendChild(option)
+            })
+        }
+    </script>
 }
